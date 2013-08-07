@@ -9,7 +9,7 @@ import yaml
 from glob import glob
 
 def get_photo_a(photo):
-    a_tag = '<a tabindex="1" class="horizontal">'
+    a_tag = '<a tabindex="1" class="{0}">'.format(photo['orientation'])
     img_tag = '<img src="{0}"'.format(photo['src'])
     if 'text' in photo:
         img_tag += ' alt="{0}"'.format(photo['text'])
@@ -32,14 +32,20 @@ if "title" in yaml_data:
 else:
     title = ""
 
-for file in glob("IMG*.jpg"):
-    filename = resize.resize_without_thumbnail(file)
+if "category" in yaml_data:
+    category = yaml_data["category"]
+else:
+    category = {"url": "http://photos.davecoss.com", "label": "Main page"}
+
+for file in glob("*.[jJ][pP][gG]") + glob("*.png"):
+    (filename, orientation) = resize.resize_without_thumbnail(file)
     if file in yaml_data:
         photo_data = yaml_data[file]
     else:
         photo_data = {}
     photo_data["src"] = filename
+    photo_data["orientation"] = orientation
     photos.append(photo_data)
 
-print(template.render({"title": title, "photos": photos, "category": {"url": "http://davecoss.com", "label": "Main page"}}))
+print(template.render({"title": title, "photos": photos, "category": category}))
 

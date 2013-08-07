@@ -26,15 +26,17 @@ def resize_without_thumbnail(filename):
     size = get_size(filename)
     if size[0] > size[1]:
         newsize = (600, 450)
+        orientation = "horizontal"
     else:
         newsize = (450, 600)
+        orientation = "vertical"
     resize(resized_filename, filename, newsize)
 
-    return resized_filename
+    return (resized_filename, orientation)
 
 def resize_and_thumbnail(filename):
     thumbnail_filename = "thumb_{0}".format(filename)
-    resized_filename = resize_without_thumbnail(filename)
+    (resized_filename, orientation) = resize_without_thumbnail(filename)
     create_thumbnail(thumbnail_filename, resized_filename)
 
 if __name__ == "__main__":
