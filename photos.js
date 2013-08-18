@@ -12,3 +12,8 @@ $(document).ready(function(){
         }
     });
   });
+
+
+$(window).load(function(){
+	$("img#loading").hide();
+});

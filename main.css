@@ -171,3 +171,11 @@ left:150px;
 .gallery a:focus ~ .close {
     display:block;
 }
+
+/* Used by category index pages. */
+div.category {
+    background-color: #999999;
+    border:2px solid;
+    border-radius:25px;
+    padding: 2em;
+}

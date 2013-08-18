@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ title }}</title>
+    <link href="http://photos.davecoss.com/main.css" rel="stylesheet" type="text/css" />
+        <!--[if lt IE 9]>                                                       
+          <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>                                                                           
+        <![endif]-->
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script type="text/javascript" src="http://photos.davecoss.com/photos.js"></script>
+  </head>
+<body>
+  <header>
+    <h2 id="h2title">{{ title }}</h2>
+    <img id="loading" src="http://photos.davecoss.com/loading.gif" style="background-color: #ffffff;"/>
+    {% if category %}
+    <a href="{{ category['url'] }}" class="category">Return to {{ category['label'] }}</a>
+    {% else %}
+    <a href="/" class="category">Return to Main Page</a>
+    {% endif %}
+  </header>
+<div class="container" id="container">
+  {% for category in categories %}
+  <div class="category"><p class="catname">{{ category['name'] }}</p>
+    {% if 'albums' in category %}{% for album in category['albums'] %}
+    <p class="album"><a href="{{ album['url'] }}">{{ album['text'] }}</a></p>
+    {% endfor %}{% endif %}
+  </div>
+  {% endfor %}
+</div><!-- container -->
+</body>
+</html>
