@@ -6,6 +6,7 @@ from os.path import isfile
 from jinja2 import Environment, FileSystemLoader
 import resize
 import yaml
+import local_settings
 from glob import glob
 from getopt import getopt, GetoptError
 
@@ -44,8 +45,7 @@ for (opt, optarg) in opts:
         should_resize = False
 
 
-env = Environment(loader=FileSystemLoader("/Users/david/research/software"
-                                          "/photoalbum/templates"))
+env = Environment(loader=FileSystemLoader(local_settings.template_dir))
 env.filters['get_photo_a'] = get_photo_a
 template = env.get_template("index.html")
 

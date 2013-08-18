@@ -4,11 +4,11 @@
 from sys import argv
 import yaml
 from jinja2 import Environment, FileSystemLoader
+import local_settings
 
 yaml_data = yaml.load(open("info.yaml", "r"))
 
-env = Environment(loader=FileSystemLoader("/Users/david/research/software/"
-                                          "photoalbum/templates"))
+env = Environment(loader=FileSystemLoader(local_settings.template_dir))
 template = env.get_template("category_index.html")
 
 title = ""
