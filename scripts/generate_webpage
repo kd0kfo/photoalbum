@@ -2,7 +2,7 @@
 
 
 from sys import argv
-from os.path import isfile
+from os.path import isfile, basename, dirname
 from jinja2 import Environment, FileSystemLoader
 import photoalbum.resize
 import yaml
@@ -22,10 +22,10 @@ def get_photo_a(photo):
 should_resize = True
 manifest_version = "1.0"
 prefix = "reduced"
-template_dir = "templates"
+template_path = "templates/index.html"
 try:
     (opts, args) = getopt(argv[1:], "hm:p:", ["help", "manifest=", "no-resize",
-                                              "prefix=", "templates="])
+                                              "prefix=", "template="])
 except GetoptError as ge:
     from sys import stderr
     stderr.write("Invalid argument")
@@ -42,8 +42,8 @@ for (opt, optarg) in opts:
               " index page.")
         print("-p, --prefix STRING\tUse STRING as a prefix for the new"
               " file names, using the format PREFIX_ORIGINALFILENAME.jpg")
-        print("    --templates PATH\tDirectory that contains template files"
-              " (Default: templates/")
+        print("    --template PATH\tPath to template file"
+              " (Default: templates/index.html")
         exit(0)
     elif opt in ["m", "manifest"]:
         manifest_version = optarg
@@ -51,13 +51,13 @@ for (opt, optarg) in opts:
         should_resize = False
     elif opt in ["p", "prefix"]:
         prefix = optarg
-    elif opt == "templates":
-        template_dir = optarg
+    elif opt == "template":
+        template_path = optarg
 
 
-env = Environment(loader=FileSystemLoader(template_dir))
+env = Environment(loader=FileSystemLoader(dirname(template_path)))
 env.filters['get_photo_a'] = get_photo_a
-template = env.get_template("index.html")
+template = env.get_template(basename(template_path))
 
 photos = []
 yaml_data = {}
@@ -74,7 +74,7 @@ else:
 if "category" in yaml_data:
     category = yaml_data["category"]
 else:
-    category = {"url": "//photos.davecoss.com", "label": "Main page"}
+    category = {"url": "//", "label": "Main page"}
 
 if "ignore" in yaml_data:
     ignore_list = yaml_data["ignore"]
@@ -105,9 +105,7 @@ with open("manifest.appcache", "w") as output:
     for photo in photos:
         output.write("{0}\n".format(photo["src"]))
 
-    output.write("NETWORK:\n")
-    for input in ["http://ajax.googleapis.com/ajax/libs/"
-                  "jquery/1.10.2/jquery.min.js",
-                  "//davecoss.com/main.css",
-                  "//photos.davecoss.com/photos.js"]:
+    for input in ["/jquery.min.js",
+                  "/photos.css",
+                  "/photos.js"]:
         output.write("{0}\n".format(input))

@@ -2,12 +2,13 @@
 
 
 from sys import argv
+from os.path import basename, dirname
 import yaml
 from jinja2 import Environment, FileSystemLoader
 
-template_dir = "templates"
+template_path = "template/index.html"
 try:
-    (opts, args) = getopt(argv[1:], "h", ["help", "templates="])
+    (opts, args) = getopt(argv[1:], "h", ["help", "template="])
 except GetoptError as ge:
     from sys import stderr
     stderr.write("Invalid argument")
@@ -19,17 +20,17 @@ for (opt, optarg) in opts:
     if opt in ["h", "help"]:
         print("Options:")
         print("-h, --help\t\tThis help Dialog")
-        print("    --templates PATH\tDirectory that contains template files"
-              " (Default: templates/")
+        print("    --template PATH\tPath to template file"
+              " (Default: templates/index.html")
         exit(0)
-    elif opt == "templates":
-        template_dir = optarg
+    elif opt == "template":
+        template_path = optarg
 
 
 yaml_data = yaml.load(open("info.yaml", "r"))
 
-env = Environment(loader=FileSystemLoader(template_dir))
-template = env.get_template("category_index.html")
+env = Environment(loader=FileSystemLoader(dirname(template_path)))
+template = env.get_template(basename(template_path))
 
 title = ""
 category = None
