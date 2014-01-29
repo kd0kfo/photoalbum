@@ -2,7 +2,7 @@
 
 from setuptools import setup
 
-setup(name='photoablum',
+setup(name='photoalbum',
       version='1.0.b',
       description='Photo Album Generator',
       author='David Coss, PhD',
