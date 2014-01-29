@@ -3,6 +3,7 @@
 
 from sys import argv
 from os.path import basename, dirname
+from getopt import getopt, GetoptError
 import yaml
 from jinja2 import Environment, FileSystemLoader
 
