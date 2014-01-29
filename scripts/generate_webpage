@@ -4,9 +4,8 @@
 from sys import argv
 from os.path import isfile
 from jinja2 import Environment, FileSystemLoader
-import resize
+import photoalbum.resize
 import yaml
-import local_settings
 from glob import glob
 from getopt import getopt, GetoptError
 
@@ -22,8 +21,11 @@ def get_photo_a(photo):
 
 should_resize = True
 manifest_version = "1.0"
+prefix = "reduced"
+template_dir = "templates"
 try:
-    (opts, args) = getopt(argv[1:], "hm:", ["help", "manifest=", "no-resize"])
+    (opts, args) = getopt(argv[1:], "hm:p:", ["help", "manifest=", "no-resize",
+                                              "prefix=", "templates="])
 except GetoptError as ge:
     from sys import stderr
     stderr.write("Invalid argument")
@@ -38,14 +40,22 @@ for (opt, optarg) in opts:
         print("-m, --manifest STRING\tUse STRING as version in manifest file.")
         print("    --no-resize\t\tDo not resize images. Only generate"
               " index page.")
+        print("-p, --prefix STRING\tUse STRING as a prefix for the new"
+              " file names, using the format PREFIX_ORIGINALFILENAME.jpg")
+        print("    --templates PATH\tDirectory that contains template files"
+              " (Default: templates/")
         exit(0)
     elif opt in ["m", "manifest"]:
         manifest_version = optarg
     elif opt == "no-resize":
         should_resize = False
+    elif opt in ["p", "prefix"]:
+        prefix = optarg
+    elif opt == "templates":
+        template_dir = optarg
 
 
-env = Environment(loader=FileSystemLoader(local_settings.template_dir))
+env = Environment(loader=FileSystemLoader(template_dir))
 env.filters['get_photo_a'] = get_photo_a
 template = env.get_template("index.html")
 
@@ -64,18 +74,18 @@ else:
 if "category" in yaml_data:
     category = yaml_data["category"]
 else:
-    category = {"url": "http://photos.davecoss.com", "label": "Main page"}
+    category = {"url": "//photos.davecoss.com", "label": "Main page"}
 
 if "ignore" in yaml_data:
     ignore_list = yaml_data["ignore"]
 
-for infilename in glob("*.[jJ][pP][gG]") + glob("*.png"):
+for infilename in glob("*.[jJ][pP][gG]") + glob("*.png") + glob("*.[gG][iI][fF]"):
     if infilename in ignore_list:
         continue
     if should_resize:
-        (filename, orientation) = resize.resize_without_thumbnail(infilename)
+        (filename, orientation) = photoalbum.resize.resize_without_thumbnail(infilename, prefix)
     else:
-        (filename, orientation) = resize.get_name_and_orientation(infilename)
+        (filename, orientation) = photoalbum.resize.get_name_and_orientation(infilename, prefix)
     if infilename in yaml_data:
         photo_data = yaml_data[infilename]
     else:
@@ -86,7 +96,7 @@ for infilename in glob("*.[jJ][pP][gG]") + glob("*.png"):
 
 with open("index.html", "w") as output:
     output.write(template.render({"title": title, "photos": photos,
-                                  "category": category}))
+                                  "category": category, "production_command": " ".join(argv)}))
 
 with open("manifest.appcache", "w") as output:
     output.write("CACHE MANIFEST\n")
@@ -98,6 +108,6 @@ with open("manifest.appcache", "w") as output:
     output.write("NETWORK:\n")
     for input in ["http://ajax.googleapis.com/ajax/libs/"
                   "jquery/1.10.2/jquery.min.js",
-                  "http://photos.davecoss.com/main.css",
-                  "http://photos.davecoss.com/photos.js"]:
+                  "//davecoss.com/main.css",
+                  "//photos.davecoss.com/photos.js"]:
         output.write("{0}\n".format(input))

@@ -20,8 +20,8 @@ def create_thumbnail(thumbnail_name, filename, factor=6):
     resize(thumbnail_name, filename, newsize)
 
 
-def get_name_and_orientation(filename):
-    resized_filename = "reduced_{0}".format(filename)
+def get_name_and_orientation(filename, prefix="reduced"):
+    resized_filename = "{0}_{1}".format(prefix, filename)
 
     size = get_size(filename)
     if size[0] > size[1]:
@@ -34,9 +34,9 @@ def get_name_and_orientation(filename):
     return (resized_filename, orientation)
 
 
-def resize_without_thumbnail(filename):
+def resize_without_thumbnail(filename, prefix="reduced"):
 
-    resized_filename = "reduced_{0}".format(filename)
+    resized_filename = "{0}_{1}".format(prefix, filename)
 
     size = get_size(filename)
     if size[0] > size[1]:

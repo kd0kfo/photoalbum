@@ -1,0 +1,45 @@
+#!/usr/bin/env python
+
+
+from sys import argv
+import yaml
+from jinja2 import Environment, FileSystemLoader
+
+template_dir = "templates"
+try:
+    (opts, args) = getopt(argv[1:], "h", ["help", "templates="])
+except GetoptError as ge:
+    from sys import stderr
+    stderr.write("Invalid argument")
+    raise ge
+
+for (opt, optarg) in opts:
+    while opt[0] == "-":
+        opt = opt[1:]
+    if opt in ["h", "help"]:
+        print("Options:")
+        print("-h, --help\t\tThis help Dialog")
+        print("    --templates PATH\tDirectory that contains template files"
+              " (Default: templates/")
+        exit(0)
+    elif opt == "templates":
+        template_dir = optarg
+
+
+yaml_data = yaml.load(open("info.yaml", "r"))
+
+env = Environment(loader=FileSystemLoader(template_dir))
+template = env.get_template("category_index.html")
+
+title = ""
+category = None
+parent = None
+if 'title' in yaml_data:
+    title = yaml_data['title']
+if 'category' in yaml_data:
+    category = yaml_data['category']
+
+with open("index.html", "w") as output:
+    output.write(template.render({"title": title,
+                                  "categories": yaml_data["categories"],
+                                  "category": category}))
