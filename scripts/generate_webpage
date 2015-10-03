@@ -106,6 +106,6 @@ with open("manifest.appcache", "w") as output:
         output.write("{0}\n".format(photo["src"]))
 
     for input in ["/jquery.min.js",
-                  "/photos.css",
-                  "/photos.js"]:
+                  "/photos/photos.css",
+                  "/photos/photos.js"]:
         output.write("{0}\n".format(input))
