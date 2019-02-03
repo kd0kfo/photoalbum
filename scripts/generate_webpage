@@ -74,7 +74,7 @@ else:
 if "category" in yaml_data:
     category = yaml_data["category"]
 else:
-    category = {"url": "//", "label": "Main page"}
+    category = {"url": "/", "label": "Main page"}
 
 if "ignore" in yaml_data:
     ignore_list = yaml_data["ignore"]
