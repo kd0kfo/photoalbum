@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(name='photoalbum',
-      version='1.0.b',
+      version='1.1',
       description='Photo Album Generator',
       author='David Coss, PhD',
       author_email='david@davecoss.com',
